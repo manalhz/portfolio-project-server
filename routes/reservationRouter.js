@@ -1,11 +1,11 @@
-const express = require("express");
+const express = require('express');
 const reservationRouter = express.Router();
 
 reservationRouter
-  .route("/")
+  .route('/')
   .all((req, res, next) => {
     res.statusCode = 200;
-    res.setHeader("Content-Type", "text/plain");
+    res.setHeader('Content-Type', 'text/plain');
     next();
   })
   .get((req, res) => {
@@ -28,10 +28,10 @@ reservationRouter
 
   .delete((req, res) => {
     res.statusCode = 403;
-    res.end("DELETE operation not supported on /reservation");
+    res.end('DELETE operation not supported on /reservation');
   });
 
-reservationRouter.route("/cancel").put((req, res) => {
+reservationRouter.route('/cancel').put((req, res) => {
   res.statusCode = 200;
   res.end(`Will cancel ${req.body.reservationId}`);
 });

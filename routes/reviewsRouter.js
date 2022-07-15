@@ -1,11 +1,11 @@
-const express = require("express");
+const express = require('express');
 const reviewsRouter = express.Router();
 
 reviewsRouter
-  .route("/")
+  .route('/')
   .all((req, res, next) => {
     res.statusCode = 200;
-    res.setHeader("Content-Type", "text/plain");
+    res.setHeader('Content-Type', 'text/plain');
     next();
   })
   .get((req, res) => {
@@ -20,12 +20,12 @@ reviewsRouter
 
   .put((req, res) => {
     res.statusCode = 403;
-    res.end("PUT operation not supported on /reviews");
+    res.end('PUT operation not supported on /reviews');
   })
 
   .delete((req, res) => {
     res.statusCode = 403;
-    res.end("DELETE operation not supported on /reviews");
+    res.end('DELETE operation not supported on /reviews');
   });
 
 module.exports = reviewsRouter;
