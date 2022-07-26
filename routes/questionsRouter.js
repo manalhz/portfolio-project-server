@@ -1,72 +1,34 @@
 const express = require('express');
-const Questions = require('../models/questions');
+const nodemailer = require('nodemailer');
+
 const questionsRouter = express.Router();
 
-questionsRouter.route('/');
-get((req, res, next) => {
-  Questions.findById(req.params.questionId)
-    .then((question) => {
-      if (question) {
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'application/json');
-        res.json(question);
-      } else {
-        err = new Error(`Question not found`);
-        err.status = 404;
-        return next(err);
-      }
-    })
-    .catch((err) => next(err));
-})
-  .post((req, res, next) => {
-    Questions.findById(req.params.questionId)
-      .then((question) => {
-        if (question) {
-          question.push(req.body);
-          question
-            .save()
-            .then((question) => {
-              res.statusCode = 200;
-              res.setHeader('Content-Type', 'application/json');
-              res.json(question);
-            })
-            .catch((err) => next(err));
-        } else {
-          err = new Error(`Question ${req.params.questionId} not found`);
-          err.status = 404;
-          return next(err);
-        }
-      })
-      .catch((err) => next(err));
-  })
-  .put((req, res) => {
-    res.statusCode = 403;
-    res.end(
-      `PUT operation not supported on /questions/${req.params.questionId}/comments`
-    );
-  })
-  .delete((req, res, next) => {
-    Campsite.findById(req.params.campsiteId)
-      .then((campsite) => {
-        if (campsite) {
-          for (let i = campsite.comments.length - 1; i >= 0; i--) {
-            campsite.comments.id(campsite.comments[i]._id).remove();
-          }
-          campsite
-            .save()
-            .then((campsite) => {
-              res.statusCode = 200;
-              res.setHeader('Content-Type', 'application/json');
-              res.json(campsite);
-            })
-            .catch((err) => next(err));
-        } else {
-          err = new Error(`Question not found`);
-          err.status = 404;
-          return next(err);
-        }
-      })
-      .catch((err) => next(err));
-  });
+//create reusable transporter object using the default SMTP transport
+let transporter = nodemailer.createTransport({
+  host: 'smtp.mailtrap.io',
+  port: 2525,
+  auth: {
+    user: process.env.EMAIL_USERNAME, // generated ethereal user
+    pass: process.env.EMAIL_PASSWORD, // generated ethereal password
+  },
+});
+
+questionsRouter.route('/').post(async (req, res, next) => {
+  const { email, name, question } = req.body;
+
+  try {
+    // send mail with defined transport object
+    let info = await transporter.sendMail({
+      from: email, // sender address
+      to: 'manalhz@gmail.com', // list of receivers
+      subject: 'Question About OC Vacation Home', // Subject line
+      text: name + '\n\n' + question, // html body
+    });
+    res.sendStatus(200);
+    // send success back
+  } catch (err) {
+    res.sendStatus(500);
+  }
+});
 
 module.exports = questionsRouter;

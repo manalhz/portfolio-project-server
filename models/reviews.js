@@ -14,8 +14,9 @@ const reviewsSchema = new Schema(
       required: true,
     },
     user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
+      type: String,
+      //ref: 'User',
+      required: true,
     },
   },
   {

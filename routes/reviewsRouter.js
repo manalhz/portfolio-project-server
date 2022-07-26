@@ -1,31 +1,46 @@
 const express = require('express');
+const Reviews = require('../models/reviews');
 const reviewsRouter = express.Router();
 
 reviewsRouter
   .route('/')
-  .all((req, res, next) => {
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'text/plain');
-    next();
-  })
-  .get((req, res) => {
-    res.end(`Will send details of all reviews`);
-  })
-
-  .post((req, res) => {
-    res.end(
-      `Will add the review: ${req.body.name} with review ${req.body.review} and rating ${req.body.rating}`
-    );
+  .get((req, res, next) => {
+    Reviews.find()
+      //.populate()
+      .then((reviews) => {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(reviews);
+      })
+      .catch((err) => next(err));
   })
 
-  .put((req, res) => {
-    res.statusCode = 403;
-    res.end('PUT operation not supported on /reviews');
-  })
+  .post((req, res, next) => {
+    console.log('Review Created');
+    // Reviews.create(req.body)
+    //   .then((review) =>{
+    //     console.log
+    //   })
 
-  .delete((req, res) => {
-    res.statusCode = 403;
-    res.end('DELETE operation not supported on /reviews');
+    // const reviewData = {
+    //   text: req.body.review,
+    //   rating: req.body.rating,
+    //   user: req.body.author,
+    // };
+
+    // const review = new Reviews(reviewData);
+    // review.save(function (err) {
+    //   if (err) return handleError(err);
+    //   // saved!
+    // });
+
+    Reviews.create(req.body, function (err, review) {
+      if (err) return handleError(err);
+      console.log(review);
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      res.json(review);
+    });
   });
 
 module.exports = reviewsRouter;
